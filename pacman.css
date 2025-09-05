@@ -1,24 +1,17 @@
-/* 레이아웃 기본 */
-:root {
-  --pad: 16px;
-  --btn: 64px;
-}
+:root { --pad: 16px; --btn: 64px; }
 
 * { box-sizing: border-box; }
 html, body {
-  height: 100%;
-  margin: 0;
-  background: #111;
-  color: #fff;
+  height: 100%; margin: 0; background: #111; color: #fff;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
 }
-
 #app {
   min-height: 100%;
   display: grid;
   place-items: center;
   gap: 20px;
   padding: var(--pad);
+  position: relative;
 }
 
 /* 캔버스 */
@@ -26,47 +19,32 @@ html, body {
   background: #000;
   image-rendering: pixelated;
   box-shadow: 0 10px 40px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.08);
-  touch-action: none; /* 캔버스 위 스와이프 시 페이지 스크롤 방지 */
+  touch-action: none;          /* 캔버스 위 스와이프 시 스크롤 방지 */
+  z-index: 0;                  /* 컨트롤 아래로 */
 }
 
-/* 터치 컨트롤러 */
+/* ✅ 터치 컨트롤: 항상 위에 보이도록 */
 #controls {
-  display: grid;
-  grid-template-areas:
-    "up"
-    "mid";
-  gap: 10px;
-  user-select: none;
-  -webkit-user-select: none;
+  position: fixed;
+  left: 50%; bottom: 20px; transform: translateX(-50%);
+  display: grid; grid-template-areas: "up" "mid";
+  gap: 10px; user-select: none; -webkit-user-select: none;
+  z-index: 3;                  /* 캔버스 위 */
+  pointer-events: auto;
 }
 
 #controls .btn {
-  width: var(--btn);
-  height: var(--btn);
-  font-size: 28px;
-  border: none;
-  border-radius: 16px;
-  background: #222;
-  color: #fff;
+  width: var(--btn); height: var(--btn); font-size: 28px;
+  border: none; border-radius: 16px;
+  background: #222; color: #fff;
   box-shadow: 0 6px 16px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.06);
-  touch-action: manipulation;
+  touch-action: manipulation;  /* iOS 탭 지연 방지 */
 }
-#controls .btn:active {
-  transform: translateY(1px) scale(0.98);
-  background: #2c2c2c;
-}
+#controls .btn:active { transform: translateY(1px) scale(0.98); background: #2c2c2c; }
 
-#controls .up { grid-area: up; justify-self: center; }
-#controls .mid {
-  grid-area: mid;
-  display: grid;
+#controls .up  { grid-area: up;  justify-self: center; }
+#controls .mid { grid-area: mid; display: grid;
   grid-template-columns: var(--btn) var(--btn) var(--btn);
-  gap: 10px;
-  align-items: center;
-  justify-items: center;
-}
+  gap: 10px; align-items: center; justify-items: center; }
 
-/* 작은 화면에서 버튼 크기 줄이기 */
-@media (max-width: 480px) {
-  :root { --btn: 56px; }
-}
+@media (max-width: 480px) { :root { --btn: 56px; } }

@@ -31,6 +31,9 @@ const CHERRY_BONUS = 300;
 let ASSETS_READY = false;
 let LAST_ERROR = null;
 
+// ▼ 로드 전 터치 입력 버퍼
+let pendingDirection = null;
+
 // X = wall, O = skip, P = pac man, ' ' = food
 // Ghosts: b = blue, o = orange, p = pink, r = red
 const tileMap = [
@@ -89,6 +92,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const newDirection = directions[Math.floor(Math.random() * 4)];
       ghost.updateDirection(newDirection);
     }
+
+    // 로드 전에 눌러둔 터치 방향이 있으면 즉시 적용
+    if (pendingDirection && pacman) {
+      pacman.updateDirection(pendingDirection);
+      pendingDirection = null;
+    }
+
     ASSETS_READY = true;
     update();
   });
@@ -138,13 +148,13 @@ function preloadImages(done) {
     if (name === "wallImage") wallImage = img;
     else if (name === "blueGhostImage") blueGhostImage = img;
     else if (name === "orangeGhostImage") orangeGhostImage = img;
-    else if (name === "pinkGhostImage") pinkGhostImage = img;
-    else if (name === "redGhostImage") redGhostImage = img;
-    else if (name === "pacmanUpImage") pacmanUpImage = img;
+    else if (name === "pinkGhostImage")  pinkGhostImage  = img;
+    else if (name === "redGhostImage")   redGhostImage   = img;
+    else if (name === "pacmanUpImage")   pacmanUpImage   = img;
     else if (name === "pacmanDownImage") pacmanDownImage = img;
     else if (name === "pacmanLeftImage") pacmanLeftImage = img;
-    else if (name === "pacmanRightImage") pacmanRightImage = img;
-    else if (name === "cherryImage") cherryImage = img;
+    else if (name === "pacmanRightImage")pacmanRightImage= img;
+    else if (name === "cherryImage")     cherryImage     = img;
   }
 }
 
@@ -472,15 +482,22 @@ function setupTouchControls() {
   // 버튼 터치/클릭
   const controls = document.getElementById("controls");
   if (controls) {
+    console.log("[controls] found");
     controls.querySelectorAll(".btn").forEach(btn => {
       const dir = btn.getAttribute("data-dir");
       const handler = (ev) => {
         ev.preventDefault();
-        if (pacman) pacman.updateDirection(dir);
+        if (pacman) {
+          pacman.updateDirection(dir);
+        } else {
+          pendingDirection = dir; // 로드 후 적용
+        }
       };
       btn.addEventListener("touchstart", handler, { passive: false });
       btn.addEventListener("click", handler);
     });
+  } else {
+    console.warn("[controls] NOT found");
   }
 
   // 캔버스 스와이프(손가락으로 쓸어 방향 전환)
@@ -523,7 +540,7 @@ function setupTouchControls() {
     } else {
       dir = dy > 0 ? "D" : "U";
     }
-    if (pacman) pacman.updateDirection(dir);
+    if (pacman) pacman.updateDirection(dir); else pendingDirection = dir;
   }, { passive: false });
 }
 
@@ -579,4 +596,4 @@ class Block {
     this.x = this.startX;
     this.y = this.startY;
   }
-        }
+    }

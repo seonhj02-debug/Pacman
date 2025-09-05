@@ -1,37 +1,72 @@
-<!doctype html>
+/* 레이아웃 기본 */
+:root {
+  --pad: 16px;
+  --btn: 64px;
+}
 
+* { box-sizing: border-box; }
+html, body {
+  height: 100%;
+  margin: 0;
+  background: #111;
+  color: #fff;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
 
-<html lang="ko">
+#app {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  gap: 20px;
+  padding: var(--pad);
+}
 
+/* 캔버스 */
+#board {
+  background: #000;
+  image-rendering: pixelated;
+  box-shadow: 0 10px 40px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.08);
+  touch-action: none; /* 캔버스 위 스와이프 시 페이지 스크롤 방지 */
+}
 
-<head>
+/* 터치 컨트롤러 */
+#controls {
+  display: grid;
+  grid-template-areas:
+    "up"
+    "mid";
+  gap: 10px;
+  user-select: none;
+  -webkit-user-select: none;
+}
 
+#controls .btn {
+  width: var(--btn);
+  height: var(--btn);
+  font-size: 28px;
+  border: none;
+  border-radius: 16px;
+  background: #222;
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.06);
+  touch-action: manipulation;
+}
+#controls .btn:active {
+  transform: translateY(1px) scale(0.98);
+  background: #2c2c2c;
+}
 
-  <meta charset="utf-8" />
+#controls .up { grid-area: up; justify-self: center; }
+#controls .mid {
+  grid-area: mid;
+  display: grid;
+  grid-template-columns: var(--btn) var(--btn) var(--btn);
+  gap: 10px;
+  align-items: center;
+  justify-items: center;
+}
 
-
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-
-  <title>Pac-Man</title>
-
-
-  <link rel="stylesheet" href="pacman.css" />
-
-
-  <script src="pacman.js" defer></script>
-
-
-</head>
-
-
-<body>
-
-
-  <canvas id="board" width="608" height="672"></canvas>
-
-
-</body>
-
-
-</html>
+/* 작은 화면에서 버튼 크기 줄이기 */
+@media (max-width: 480px) {
+  :root { --btn: 56px; }
+}
